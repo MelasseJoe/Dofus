@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dofus Multi-Tracker Pro</title>
+    <title>Dofus Multi-Tracker</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #FFFFFF; }
         .class-btn { transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); border-color: #F3F4F6; color: var(--class-color); }
-        .class-btn.active { transform: scale(1.1); background-color: rgba(0,0,0,0.03); border-color: var(--class-color) !important; opacity: 1; filter: none; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05); }
+        .class-btn.active { transform: scale(1.1); background-color: rgba(0,0,0,0.03); border-color: var(--class-color) !important; opacity: 1; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05); }
         .class-btn.inactive { opacity: 0.15; filter: grayscale(1); border-color: #F3F4F6 !important; background-color: transparent !important; transform: scale(1); }
         header { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(12px); }
     </style>
@@ -24,10 +24,12 @@
                     <p id="current-date" class="text-[10px] text-gray-400 font-bold uppercase tracking-widest"></p>
                 </div>
                 <div class="flex items-center gap-1">
-                    <button onclick="resetDailyOnly()" class="p-2 text-blue-400 hover:text-blue-600 transition-colors">
+                    <!-- Bouton Reset Journalier -->
+                    <button onclick="resetDailyOnly()" class="p-2 text-blue-400 hover:text-blue-600 transition-colors" title="Reset Quotidien">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
                     </button>
-                    <button onclick="resetAll()" class="p-2 text-gray-300 hover:text-red-500 transition-colors">
+                    <!-- Bouton Reset Global -->
+                    <button onclick="resetAll()" class="p-2 text-gray-300 hover:text-red-500 transition-colors" title="Tout effacer">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
                     </button>
                 </div>
@@ -81,7 +83,7 @@
         ];
 
         const dailyQuests = [
-            { id: 'alma', title: 'Almanax', icon: '📅', hint: null },
+            { id: 'alma', title: 'Almanax', icon: '📅', hint: 'Offrande du jour' },
             { id: 'steak', title: 'Steak de dragodinde', icon: '🥩', hint: 'Viande avariée x25' },
             { id: 'hue', title: 'Aller Hue', icon: '🐴', hint: 'Dragodinde Amande' },
             { id: 'kerub', title: "Bien velu c'est Kérubim", icon: '🐱', hint: null }
@@ -94,30 +96,6 @@
         ];
 
         let db = JSON.parse(localStorage.getItem('dofus_tracker_v3')) || {};
-
-        async function fetchAlmanax() {
-            const almaSub = document.getElementById('alma-detail');
-            if (!almaSub) return;
-            
-            // Utilisation d'un proxy CORS pour éviter le blocage navigateur
-            const targetUrl = 'https://api.dofusdu.de/dofus2/fr/almanax/today';
-            const proxyUrl = 'https://api.allorigins.win/get?url=' + encodeURIComponent(targetUrl);
-
-            try {
-                const response = await fetch(proxyUrl);
-                const result = await response.json();
-                const data = JSON.parse(result.contents); // AllOrigins encapsule le JSON dans une chaîne "contents"
-                
-                if (data && data.tribute) {
-                    almaSub.innerText = `${data.tribute.quantity}x ${data.tribute.item.name}`;
-                } else {
-                    almaSub.innerText = "Indisponible (API)";
-                }
-            } catch (error) {
-                console.error(error);
-                almaSub.innerText = "Erreur de connexion";
-            }
-        }
 
         function toggleQuest(questId, classId) {
             if (!db[questId]) db[questId] = {};
@@ -135,14 +113,9 @@
                 buttonsHtml += `<button onclick="toggleQuest('${q.id}', '${c.id}')" class="class-btn w-9 h-9 rounded-2xl border-2 flex items-center justify-center text-base ${isChecked ? 'active shadow-sm' : 'inactive'}" style="--class-color: ${c.color};">${c.icon}</button>`;
             });
 
-            let subTextContent = '';
-            if (q.id === 'alma') {
-                subTextContent = `<p id="alma-detail" class="text-[10px] text-[#B1C42E] font-bold uppercase tracking-tighter italic">Chargement...</p>`;
-            } else if (q.hint) {
-                subTextContent = `<p class="text-[10px] text-gray-400 font-medium italic leading-none mt-0.5">${q.hint}</p>`;
-            }
+            const subText = q.hint ? `<p class="text-[10px] text-gray-400 font-medium italic leading-none mt-0.5">${q.hint}</p>` : '';
 
-            row.innerHTML = `<div class="flex items-center gap-3 pr-2 overflow-hidden"><div class="min-w-[32px] w-8 h-8 bg-gray-50 rounded-xl flex items-center justify-center text-sm shadow-sm">${q.icon}</div><div class="overflow-hidden"><span class="font-bold text-gray-800 text-[13px] leading-tight tracking-tight block truncate">${q.title}</span>${subTextContent}</div></div><div class="flex gap-3 shrink-0">${buttonsHtml}</div>`;
+            row.innerHTML = `<div class="flex items-center gap-3 pr-2 overflow-hidden"><div class="min-w-[32px] w-8 h-8 bg-gray-50 rounded-xl flex items-center justify-center text-sm shadow-sm">${q.icon}</div><div class="overflow-hidden"><span class="font-bold text-gray-800 text-[13px] leading-tight tracking-tight block truncate">${q.title}</span>${subText}</div></div><div class="flex gap-3 shrink-0">${buttonsHtml}</div>`;
             return row;
         }
 
@@ -153,38 +126,38 @@
             weeklyContainer.innerHTML = '';
             let totalDone = 0;
             const allQuests = [...dailyQuests, ...weeklyQuests];
+            
             dailyQuests.forEach(q => dailyContainer.appendChild(createRow(q)));
             weeklyQuests.forEach(q => weeklyContainer.appendChild(createRow(q)));
+            
             allQuests.forEach(q => { classes.forEach(c => { if (db[q.id] && db[q.id][c.id]) totalDone++; }); });
             const totalPossible = allQuests.length * classes.length;
             const percent = totalPossible > 0 ? Math.round((totalDone / totalPossible) * 100) : 0;
+            
             document.getElementById('global-percent').innerText = percent + '%';
             document.getElementById('global-progress-bar').style.width = percent + '%';
             document.getElementById('global-count').innerText = `${totalDone} / ${totalPossible} quêtes terminées`;
         }
 
         function resetDailyOnly() {
-            if(confirm("Reset journalier ?")) {
+            if(confirm("Réinitialiser les quêtes journalières uniquement ?")) {
                 dailyQuests.forEach(q => { db[q.id] = {}; });
                 localStorage.setItem('dofus_tracker_v3', JSON.stringify(db));
                 render();
-                fetchAlmanax();
             }
         }
 
         function resetAll() {
-            if(confirm("Reset total ?")) {
+            if(confirm("Réinitialiser absolument tout ?")) {
                 db = {};
                 localStorage.removeItem('dofus_tracker_v3');
                 render();
-                fetchAlmanax();
             }
         }
 
-        const options = { weekday: 'long', day: 'numeric', month: 'long' };
-        document.getElementById('current-date').innerText = new Date().toLocaleDateString('fr-FR', options);
+        // Init
+        document.getElementById('current-date').innerText = new Date().toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' });
         render();
-        fetchAlmanax();
     </script>
 </body>
 </html>
