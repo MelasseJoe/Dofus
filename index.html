@@ -1,16 +1,141 @@
-<!-- Carte de Quête Style Modern/ShipFast -->
-<div class="bg-white border border-gray-100 p-4 rounded-3xl shadow-sm flex items-center justify-between mb-4">
-    <div class="flex items-center gap-4">
-      <div class="w-12 h-12 bg-green-100 rounded-2xl flex items-center justify-center text-2xl">
-        📅 <!-- Icône de la quête -->
-      </div>
-      <div>
-        <h3 class="font-bold text-gray-800 text-lg">Almanax</h3>
-        <p class="text-gray-500 text-sm">Offrande au Méryde</p>
-      </div>
-    </div>
-    
-    <button class="w-10 h-10 rounded-full border-2 border-gray-200 flex items-center justify-center active:scale-90 transition-all">
-      <!-- Checkmark SVG ici -->
-    </button>
-  </div>
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dofus Daily Tracker</title>
+    <!-- Tailwind CSS pour le style moderne -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts (Inter) -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #F9FAFB; }
+        .bento-card { transition: all 0.2s ease-in-out; }
+        .bento-card:active { scale: 0.98; }
+        .checked { border-color: #B1C42E !important; background-color: #F9FBE7; }
+    </style>
+</head>
+<body class="pb-24"> <!-- Padding bottom pour la barre de navigation mobile -->
+
+    <!-- --- HEADER (Style ShipFast) --- -->
+    <header class="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-100 px-6 py-4">
+        <div class="max-w-md mx-auto flex justify-between items-center">
+            <div>
+                <h1 class="text-xl font-extrabold tracking-tight text-gray-900">DOFUS <span class="text-[#B1C42E]">DAILY</span></h1>
+                <p class="text-xs text-gray-500 font-medium uppercase tracking-wider" id="current-date">Chargement...</p>
+            </div>
+            <!-- Avatar / Profil -->
+            <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-[#B1C42E] to-green-600 border-2 border-white shadow-sm flex items-center justify-center text-white font-bold text-xs">
+                IG
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-md mx-auto px-6 mt-8">
+        <!-- Dashboard Score -->
+        <div class="bg-white border border-gray-100 rounded-[2rem] p-6 mb-8 shadow-sm">
+            <p class="text-sm text-gray-500 font-semibold mb-1">Progression du jour</p>
+            <div class="flex items-end gap-2 mb-4">
+                <span class="text-4xl font-extrabold text-gray-900" id="count-display">0</span>
+                <span class="text-gray-400 font-bold mb-1">/ 4 quêtes</span>
+            </div>
+            <div class="w-full bg-gray-100 h-2.5 rounded-full overflow-hidden">
+                <div id="progress-bar" class="bg-[#B1C42E] h-full w-0 transition-all duration-500"></div>
+            </div>
+        </div>
+
+        <!-- LISTE DES QUÊTES -->
+        <div class="space-y-4" id="quest-list">
+            <!-- Quête 1 -->
+            <div onclick="toggleQuest(this)" class="bento-card bg-white border border-gray-100 p-4 rounded-3xl flex items-center justify-between cursor-pointer">
+                <div class="flex items-center gap-4">
+                    <div class="text-2xl">📅</div>
+                    <div>
+                        <h3 class="font-bold text-gray-800">Almanax</h3>
+                        <p class="text-xs text-gray-500 italic">Offrande du jour</p>
+                    </div>
+                </div>
+                <div class="check-box w-8 h-8 rounded-full border-2 border-gray-100 flex items-center justify-center">
+                    <svg class="w-5 h-5 text-[#B1C42E] hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                </div>
+            </div>
+
+            <!-- Quête 2 -->
+            <div onclick="toggleQuest(this)" class="bento-card bg-white border border-gray-100 p-4 rounded-3xl flex items-center justify-between cursor-pointer">
+                <div class="flex items-center gap-4">
+                    <div class="text-2xl">⚔️</div>
+                    <div>
+                        <h3 class="font-bold text-gray-800">Dopeuls</h3>
+                        <p class="text-xs text-gray-500 italic">Tour des temples</p>
+                    </div>
+                </div>
+                <div class="check-box w-8 h-8 rounded-full border-2 border-gray-100 flex items-center justify-center">
+                    <svg class="w-5 h-5 text-[#B1C42E] hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                </div>
+            </div>
+
+            <!-- Quête 3 -->
+            <div onclick="toggleQuest(this)" class="bento-card bg-white border border-gray-100 p-4 rounded-3xl flex items-center justify-between cursor-pointer">
+                <div class="flex items-center gap-4">
+                    <div class="text-2xl">🌊</div>
+                    <div>
+                        <h3 class="font-bold text-gray-800">Quêtes Sufokia</h3>
+                        <p class="text-xs text-gray-500 italic">Ravitaillement</p>
+                    </div>
+                </div>
+                <div class="check-box w-8 h-8 rounded-full border-2 border-gray-100 flex items-center justify-center">
+                    <svg class="w-5 h-5 text-[#B1C42E] hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- NAVIGATION BASSE (Mobile) -->
+    <nav class="fixed bottom-6 left-1/2 -translate-x-1/2 w-[90%] max-w-md bg-gray-900 text-white p-4 rounded-full shadow-2xl flex justify-around items-center">
+        <button class="text-[#B1C42E]">
+            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+        </button>
+        <button class="text-gray-400 opacity-50">
+            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
+        </button>
+        <button class="text-gray-400 opacity-50">
+            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+        </button>
+    </nav>
+
+    <script>
+        // Affichage de la date
+        const options = { weekday: 'long', day: 'numeric', month: 'long' };
+        document.getElementById('current-date').innerText = new Date().toLocaleDateString('fr-FR', options);
+
+        // Système de coiffe/décoiffe
+        let completedCount = 0;
+        const totalQuests = 4; // Ajuste selon le nombre de quêtes
+
+        function toggleQuest(card) {
+            const checkBox = card.querySelector('.check-box');
+            const icon = checkBox.querySelector('svg');
+            
+            card.classList.toggle('checked');
+            icon.classList.toggle('hidden');
+
+            if (card.classList.contains('checked')) {
+                completedCount++;
+            } else {
+                completedCount--;
+            }
+
+            updateProgress();
+        }
+
+        function updateProgress() {
+            const countDisplay = document.getElementById('count-display');
+            const progressBar = document.getElementById('progress-bar');
+            
+            countDisplay.innerText = completedCount;
+            const percentage = (completedCount / 3) * 100; // Ici divisé par 3 car il y a 3 exemples
+            progressBar.style.width = percentage + '%';
+        }
+    </script>
+</body>
+</html>
