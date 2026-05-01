@@ -10,75 +10,80 @@
         body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #FFFFFF; }
         .quest-row { border-bottom: 1px solid #F3F4F6; }
         .class-btn { transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); }
-        .class-btn.active { transform: scale(1.1); border-color: currentColor; background-color: rgba(0,0,0,0.05); }
-        .class-btn.inactive { opacity: 0.2; filter: grayscale(1); border-color: #E5E7EB; }
+        .class-btn.active { transform: scale(1.1); border-color: currentColor; background-color: rgba(0,0,0,0.03); }
+        .class-btn.inactive { opacity: 0.15; filter: grayscale(1); border-color: #E5E7EB; }
     </style>
 </head>
-<body class="pb-24">
+<body class="pb-10">
 
-    <header class="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-100 px-6 py-6">
-        <div class="max-w-md mx-auto flex justify-between items-center">
-            <div>
-                <h1 class="text-2xl font-extrabold tracking-tighter text-gray-900">DOFUS<span class="text-[#B1C42E]">DAILY</span></h1>
-                <p id="current-date" class="text-[10px] text-gray-400 font-bold uppercase tracking-widest leading-none mt-1"></p>
-            </div>
-            <div class="flex gap-2">
-                 <button onclick="resetAll()" class="p-2 text-gray-400 hover:text-red-500 transition-colors">
+    <!-- HEADER & PROGRESSION (FIXED TOP) -->
+    <header class="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-gray-100">
+        <div class="max-w-md mx-auto px-6 py-4">
+            <div class="flex justify-between items-center mb-4">
+                <div>
+                    <h1 class="text-xl font-extrabold tracking-tighter text-gray-900">DOFUS<span class="text-[#B1C42E]">DAILY</span></h1>
+                    <p id="current-date" class="text-[10px] text-gray-400 font-bold uppercase tracking-widest"></p>
+                </div>
+                <button onclick="resetAll()" class="p-2 text-gray-300 hover:text-red-500 transition-colors">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
                 </button>
+            </div>
+            
+            <!-- PROGRESSION GÉNÉRALE -->
+            <div class="bg-gray-50 rounded-2xl p-4 border border-gray-100">
+                <div class="flex justify-between items-center mb-2">
+                    <span class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Progression Totale</span>
+                    <span id="global-percent" class="font-black text-[#B1C42E]">0%</span>
+                </div>
+                <div class="w-full bg-gray-200 h-1.5 rounded-full overflow-hidden">
+                    <div id="global-progress-bar" class="bg-[#B1C42E] h-full w-0 transition-all duration-700"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- LABELS CLASSES (ALIGNÉS AVEC LES BOUTONS) -->
+        <div class="max-w-md mx-auto px-6 pb-2 flex justify-between items-end">
+            <span class="text-[10px] font-black text-gray-300 uppercase tracking-widest pb-1">Mes Quêtes</span>
+            <div class="flex gap-3">
+                <span class="w-9 text-center text-[9px] font-black text-orange-500 uppercase tracking-tighter">Cra</span>
+                <span class="w-9 text-center text-[9px] font-black text-blue-500 uppercase tracking-tighter">Enu</span>
+                <span class="w-9 text-center text-[9px] font-black text-cyan-600 uppercase tracking-tighter">Fec</span>
+                <span class="w-9 text-center text-[9px] font-black text-green-700 uppercase tracking-tighter">Pan</span>
             </div>
         </div>
     </header>
 
-    <main class="max-w-md mx-auto px-6 mt-4">
+    <main class="max-w-md mx-auto px-6 mt-2">
+        <!-- LISTE DES QUÊTES -->
+        <div id="main-container" class="divide-y divide-gray-50">
+            <!-- Généré par JS -->
+        </div>
         
-        <div class="flex justify-between items-center mb-6 px-2">
-            <span class="text-[10px] font-black text-gray-300 uppercase tracking-widest">Quêtes</span>
-            <div class="flex gap-3">
-                <span class="w-8 text-center text-[10px] font-bold text-orange-500">CRA</span>
-                <span class="w-8 text-center text-[10px] font-bold text-blue-500">ENU</span>
-                <span class="w-8 text-center text-[10px] font-bold text-cyan-600">FEC</span>
-                <span class="w-8 text-center text-[10px] font-bold text-green-700">PAN</span>
-            </div>
-        </div>
-
-        <div class="space-y-1" id="main-container">
-            </div>
-
-        <div class="mt-12 p-6 bg-gray-50 rounded-[2.5rem] border border-gray-100">
-            <div class="flex justify-between items-end mb-4">
-                <h3 class="font-black text-gray-900 uppercase italic">Progression Totale</h3>
-                <span id="global-percent" class="text-2xl font-black text-[#B1C42E]">0%</span>
-            </div>
-            <div class="w-full bg-gray-200 h-2 rounded-full overflow-hidden">
-                <div id="global-progress-bar" class="bg-[#B1C42E] h-full w-0 transition-all duration-700"></div>
-            </div>
-            <p id="global-count" class="text-[10px] text-gray-400 font-bold uppercase mt-3 tracking-widest">0 / 16 quêtes terminées</p>
-        </div>
-
+        <p id="global-count" class="text-center text-[10px] text-gray-300 font-bold uppercase mt-8 tracking-widest">
+            0 / 0 quêtes terminées
+        </p>
     </main>
 
     <script>
         const classes = [
-            { id: 'cra', icon: '🏹', color: '#EA580C' }, // Orange-600
-            { id: 'enu', icon: '💰', color: '#2563EB' }, // Blue-600
-            { id: 'feca', icon: '🛡️', color: '#0891B2' }, // Cyan-600
-            { id: 'panda', icon: '🐼', color: '#15803D' } // Green-700
+            { id: 'cra', icon: '🏹', color: '#EA580C' },
+            { id: 'enu', icon: '💰', color: '#2563EB' },
+            { id: 'feca', icon: '🛡️', color: '#0891B2' },
+            { id: 'panda', icon: '🐼', color: '#15803D' }
         ];
 
         const questsTemplate = [
             { id: 'alma', title: 'Almanax', icon: '📅' },
             { id: 'dopeul', title: 'Dopeuls', icon: '⚔️' },
             { id: 'kerub', title: 'Kérubim', icon: '🐱' },
-            { id: 'protector', title: 'Protecteur', icon: '🛡️' },
-            { id: 'meryde', title: 'Méryde', icon: '✨' }
+            { id: 'avis', title: 'Avis de Recherche', icon: '📜' },
+            { id: 'meryde', title: 'Quête de Zone', icon: '✨' }
         ];
 
-        // Données : db['alma']['cra'] = true/false
         let db = JSON.parse(localStorage.getItem('dofus_multi_db')) || {};
 
         function init() {
-            const options = { day: 'numeric', month: 'long' };
+            const options = { weekday: 'long', day: 'numeric', month: 'long' };
             document.getElementById('current-date').innerText = new Date().toLocaleDateString('fr-FR', options);
             render();
         }
@@ -86,7 +91,6 @@
         function toggleQuest(questId, classId) {
             if (!db[questId]) db[questId] = {};
             db[questId][classId] = !db[questId][classId];
-            
             localStorage.setItem('dofus_multi_db', JSON.stringify(db));
             render();
         }
@@ -94,13 +98,12 @@
         function render() {
             const container = document.getElementById('main-container');
             container.innerHTML = '';
-
             let totalDone = 0;
             const totalPossible = questsTemplate.length * classes.length;
 
             questsTemplate.forEach(q => {
                 const row = document.createElement('div');
-                row.className = 'quest-row py-4 flex justify-between items-center';
+                row.className = 'py-4 flex justify-between items-center transition-opacity';
                 
                 let buttonsHtml = '';
                 classes.forEach(c => {
@@ -109,9 +112,9 @@
                     
                     buttonsHtml += `
                         <button onclick="toggleQuest('${q.id}', '${c.id}')" 
-                                class="class-btn w-8 h-8 rounded-xl border-2 flex items-center justify-center text-sm
-                                ${isChecked ? 'active' : 'inactive'}"
-                                style="color: ${c.color}; border-color: ${isChecked ? c.color : '#E5E7EB'}">
+                                class="class-btn w-9 h-9 rounded-2xl border-2 flex items-center justify-center text-base
+                                ${isChecked ? 'active shadow-sm' : 'inactive'}"
+                                style="color: ${c.color}; border-color: ${isChecked ? c.color : '#F3F4F6'}">
                             ${c.icon}
                         </button>
                     `;
@@ -119,7 +122,7 @@
 
                 row.innerHTML = `
                     <div class="flex items-center gap-3">
-                        <span class="text-lg">${q.icon}</span>
+                        <div class="w-8 h-8 bg-gray-50 rounded-lg flex items-center justify-center text-sm">${q.icon}</div>
                         <span class="font-bold text-gray-800 text-sm tracking-tight">${q.title}</span>
                     </div>
                     <div class="flex gap-3">
@@ -129,15 +132,15 @@
                 container.appendChild(row);
             });
 
-            // Update Global Progress
-            const percent = Math.round((totalDone / totalPossible) * 100);
+            // Update Progress UI
+            const percent = totalPossible > 0 ? Math.round((totalDone / totalPossible) * 100) : 0;
             document.getElementById('global-percent').innerText = percent + '%';
             document.getElementById('global-progress-bar').style.width = percent + '%';
             document.getElementById('global-count').innerText = `${totalDone} / ${totalPossible} quêtes terminées`;
         }
 
         function resetAll() {
-            if(confirm("Vider toutes les quêtes du jour ?")) {
+            if(confirm("Réinitialiser toutes les quêtes ?")) {
                 db = {};
                 localStorage.removeItem('dofus_multi_db');
                 render();
