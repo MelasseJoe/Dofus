@@ -10,30 +10,27 @@
     <style>
         body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #FFFFFF; }
         
-        /* Correction du bug de couleur persistante */
         .class-btn { 
             transition: all 0.2s ease; 
-            border-color: #F3F4F6; 
-            color: #D1D5DB; /* Gris par défaut */
+            border-width: 2px;
             background-color: transparent;
         }
 
-        /* Applique la couleur UNIQUEMENT quand actif */
+        /* État coché */
         .class-btn.active { 
             transform: scale(1.1); 
             background-color: rgba(0,0,0,0.02); 
-            border-color: var(--class-color) !important; 
-            color: var(--class-color) !important;
             opacity: 1; 
             box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05); 
         }
 
+        /* État décoché (Forçage du gris) */
         .class-btn.inactive { 
             opacity: 0.2; 
             filter: grayscale(1); 
-            border-color: #F3F4F6 !important; 
-            color: #9CA3AF !important;
             transform: scale(1);
+            border-color: #F3F4F6 !important;
+            color: #D1D5DB !important; /* Gris neutre */
         }
 
         header { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(12px); }
@@ -125,13 +122,16 @@
             
             classes.forEach(c => {
                 const isChecked = db[q.id] && db[q.id][c.id];
-                // On injecte la variable couleur UNIQUEMENT si coché pour éviter les résidus visuels
-                const styleVar = isChecked ? `--class-color: ${c.color}` : '';
+                
+                // Si coché : on applique la couleur. Sinon : on force le gris.
+                const styleAttr = isChecked 
+                    ? `style="border-color: ${c.color}; color: ${c.color};"` 
+                    : `style="border-color: #F3F4F6; color: #D1D5DB;"`;
                 
                 buttonsHtml += `
                     <button onclick="toggleQuest('${q.id}', '${c.id}')" 
-                            class="class-btn w-9 h-9 rounded-2xl border-2 flex items-center justify-center text-base ${isChecked ? 'active' : 'inactive'}" 
-                            style="${styleVar}">
+                            class="class-btn w-9 h-9 rounded-2xl flex items-center justify-center text-base ${isChecked ? 'active' : 'inactive'}" 
+                            ${styleAttr}>
                         ${c.icon}
                     </button>`;
             });
