@@ -3,20 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dofus Multi-Tracker</title>
+    <title>Dofus Daily & Weekly Tracker</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #FFFFFF; }
         
-        /* Style de base des boutons */
         .class-btn { 
             transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-            border-color: #F3F4F6; /* Gris par défaut */
+            border-color: #F3F4F6;
             color: var(--class-color);
         }
 
-        /* État coché : On utilise la variable couleur pour la bordure */
         .class-btn.active { 
             transform: scale(1.1); 
             background-color: rgba(0,0,0,0.03); 
@@ -26,7 +24,6 @@
             box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05);
         }
 
-        /* État décoché : On force le gris et la transparence */
         .class-btn.inactive { 
             opacity: 0.15; 
             filter: grayscale(1); 
@@ -34,16 +31,21 @@
             background-color: transparent !important;
             transform: scale(1);
         }
+
+        .section-card {
+            border: 1px solid #F9FAFB;
+            background: #FFFFFF;
+        }
     </style>
 </head>
-<body class="pb-10">
+<body class="pb-20">
 
     <!-- HEADER & PROGRESSION -->
     <header class="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-gray-100">
         <div class="max-w-md mx-auto px-6 py-4">
             <div class="flex justify-between items-center mb-4">
                 <div>
-                    <h1 class="text-xl font-extrabold tracking-tighter text-gray-900">DOFUS<span class="text-[#B1C42E]">DAILY</span></h1>
+                    <h1 class="text-xl font-extrabold tracking-tighter text-gray-900 italic">DOFUS<span class="text-[#B1C42E]">TRACKER</span></h1>
                     <p id="current-date" class="text-[10px] text-gray-400 font-bold uppercase tracking-widest"></p>
                 </div>
                 <button onclick="resetAll()" class="p-2 text-gray-300 hover:text-red-500 transition-colors">
@@ -51,9 +53,9 @@
                 </button>
             </div>
             
-            <div class="bg-gray-50 rounded-2xl p-4 border border-gray-100">
+            <div class="bg-gray-50 rounded-3xl p-4 border border-gray-100">
                 <div class="flex justify-between items-center mb-2">
-                    <span class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Progression Totale</span>
+                    <span class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Progression Globale</span>
                     <span id="global-percent" class="font-black text-[#B1C42E]">0%</span>
                 </div>
                 <div class="w-full bg-gray-200 h-1.5 rounded-full overflow-hidden">
@@ -63,8 +65,7 @@
         </div>
 
         <!-- LABELS CLASSES -->
-        <div class="max-w-md mx-auto px-6 pb-2 flex justify-between items-end">
-            <span class="text-[10px] font-black text-gray-300 uppercase tracking-widest pb-1">Mes Quêtes</span>
+        <div class="max-w-md mx-auto px-6 pb-3 flex justify-end">
             <div class="flex gap-3">
                 <span class="w-9 text-center text-[9px] font-black text-orange-500 uppercase tracking-tighter">Cra</span>
                 <span class="w-9 text-center text-[9px] font-black text-blue-500 uppercase tracking-tighter">Enu</span>
@@ -74,9 +75,31 @@
         </div>
     </header>
 
-    <main class="max-w-md mx-auto px-6 mt-2">
-        <div id="main-container" class="divide-y divide-gray-50"></div>
-        <p id="global-count" class="text-center text-[10px] text-gray-300 font-bold uppercase mt-8 tracking-widest">0 / 0 quêtes terminées</p>
+    <main class="max-w-md mx-auto px-6 mt-6 space-y-10">
+        
+        <!-- SECTION JOURNALIÈRE -->
+        <section>
+            <h2 class="text-[11px] font-black text-gray-300 uppercase tracking-[0.2em] mb-4 flex items-center gap-2">
+                <span class="w-2 h-2 rounded-full bg-[#B1C42E]"></span> Quêtes Journalières
+            </h2>
+            <div id="daily-container" class="space-y-1 divide-y divide-gray-50">
+                <!-- Généré par JS -->
+            </div>
+        </section>
+
+        <!-- SECTION HEBDOMADAIRE -->
+        <section>
+            <h2 class="text-[11px] font-black text-gray-300 uppercase tracking-[0.2em] mb-4 flex items-center gap-2">
+                <span class="w-2 h-2 rounded-full bg-blue-400"></span> Quêtes Hebdomadaires
+            </h2>
+            <div id="weekly-container" class="space-y-1 divide-y divide-gray-50">
+                <!-- Généré par JS -->
+            </div>
+        </section>
+
+        <p id="global-count" class="text-center text-[10px] text-gray-300 font-bold uppercase py-10 tracking-widest">
+            0 / 0 quêtes terminées
+        </p>
     </main>
 
     <script>
@@ -87,15 +110,20 @@
             { id: 'panda', icon: '🐼', color: '#15803D' }
         ];
 
-        const questsTemplate = [
+        const dailyQuests = [
             { id: 'alma', title: 'Almanax', icon: '📅' },
-            { id: 'dopeul', title: 'Dopeuls', icon: '⚔️' },
-            { id: 'kerub', title: 'Kérubim', icon: '🐱' },
-            { id: 'avis', title: 'Avis de Recherche', icon: '📜' },
-            { id: 'meryde', title: 'Quête de Zone', icon: '✨' }
+            { id: 'steak', title: 'Steak de dragodinde', icon: '🥩' },
+            { id: 'hue', title: 'Aller Hue', icon: '🐴' },
+            { id: 'kerub', title: "Bien velu c'est Kérubim", icon: '🐱' }
         ];
 
-        let db = JSON.parse(localStorage.getItem('dofus_multi_db')) || {};
+        const weeklyQuests = [
+            { id: 'brille', title: 'Il faut que cha brille', icon: '✨' },
+            { id: 'ecole', title: 'L\'école fantastique', icon: '🎓' },
+            { id: 'fight', title: 'Fight Club', icon: '🥊' }
+        ];
+
+        let db = JSON.parse(localStorage.getItem('dofus_tracker_v3')) || {};
 
         function init() {
             const options = { weekday: 'long', day: 'numeric', month: 'long' };
@@ -106,46 +134,57 @@
         function toggleQuest(questId, classId) {
             if (!db[questId]) db[questId] = {};
             db[questId][classId] = !db[questId][classId];
-            localStorage.setItem('dofus_multi_db', JSON.stringify(db));
+            localStorage.setItem('dofus_tracker_v3', JSON.stringify(db));
             render();
         }
 
-        function render() {
-            const container = document.getElementById('main-container');
-            container.innerHTML = '';
-            let totalDone = 0;
-            const totalPossible = questsTemplate.length * classes.length;
-
-            questsTemplate.forEach(q => {
-                const row = document.createElement('div');
-                row.className = 'py-4 flex justify-between items-center';
-                
-                let buttonsHtml = '';
-                classes.forEach(c => {
-                    const isChecked = db[q.id] && db[q.id][c.id];
-                    if (isChecked) totalDone++;
-                    
-                    // On passe la couleur via une variable CSS (--class-color)
-                    buttonsHtml += `
-                        <button onclick="toggleQuest('${q.id}', '${c.id}')" 
-                                class="class-btn w-9 h-9 rounded-2xl border-2 flex items-center justify-center text-base
-                                ${isChecked ? 'active' : 'inactive'}"
-                                style="--class-color: ${c.color};">
-                            ${c.icon}
-                        </button>
-                    `;
-                });
-
-                row.innerHTML = `
-                    <div class="flex items-center gap-3">
-                        <div class="w-8 h-8 bg-gray-50 rounded-lg flex items-center justify-center text-sm">${q.icon}</div>
-                        <span class="font-bold text-gray-800 text-sm tracking-tight">${q.title}</span>
-                    </div>
-                    <div class="flex gap-3">
-                        ${buttonsHtml}
-                    </div>
+        function createRow(q) {
+            const row = document.createElement('div');
+            row.className = 'py-4 flex justify-between items-center';
+            
+            let buttonsHtml = '';
+            classes.forEach(c => {
+                const isChecked = db[q.id] && db[q.id][c.id];
+                buttonsHtml += `
+                    <button onclick="toggleQuest('${q.id}', '${c.id}')" 
+                            class="class-btn w-9 h-9 rounded-2xl border-2 flex items-center justify-center text-base
+                            ${isChecked ? 'active' : 'inactive'}"
+                            style="--class-color: ${c.color};">
+                        ${c.icon}
+                    </button>
                 `;
-                container.appendChild(row);
+            });
+
+            row.innerHTML = `
+                <div class="flex items-center gap-3 pr-2">
+                    <div class="w-8 h-8 bg-gray-50 rounded-xl flex items-center justify-center text-sm shadow-sm">${q.icon}</div>
+                    <span class="font-bold text-gray-700 text-[13px] leading-tight tracking-tight">${q.title}</span>
+                </div>
+                <div class="flex gap-3">
+                    ${buttonsHtml}
+                </div>
+            `;
+            return row;
+        }
+
+        function render() {
+            const dailyContainer = document.getElementById('daily-container');
+            const weeklyContainer = document.getElementById('weekly-container');
+            dailyContainer.innerHTML = '';
+            weeklyContainer.innerHTML = '';
+
+            let totalDone = 0;
+            const allQuests = [...dailyQuests, ...weeklyQuests];
+            const totalPossible = allQuests.length * classes.length;
+
+            dailyQuests.forEach(q => dailyContainer.appendChild(createRow(q)));
+            weeklyQuests.forEach(q => weeklyContainer.appendChild(createRow(q)));
+
+            // Calcul du total
+            allQuests.forEach(q => {
+                classes.forEach(c => {
+                    if (db[q.id] && db[q.id][c.id]) totalDone++;
+                });
             });
 
             const percent = totalPossible > 0 ? Math.round((totalDone / totalPossible) * 100) : 0;
@@ -155,9 +194,9 @@
         }
 
         function resetAll() {
-            if(confirm("Réinitialiser toutes les quêtes ?")) {
+            if(confirm("Réinitialiser toutes les données ?")) {
                 db = {};
-                localStorage.removeItem('dofus_multi_db');
+                localStorage.removeItem('dofus_tracker_v3');
                 render();
             }
         }
