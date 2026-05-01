@@ -5,168 +5,142 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dofus Multi-Tracker</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Inter', sans-serif; background-color: #F9FAFB; transition: background 0.3s; }
-        .bento-card { transition: all 0.2s ease; border: 1px solid #F3F4F6; }
-        .checked { border-color: #B1C42E !important; background-color: #F9FBE7; }
-        .char-tab.active { transform: translateY(-4px); border-bottom: 4px solid currentColor; shadow: 0 10px 15px -3px rgba(0,0,0,0.1); }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #FFFFFF; }
+        .quest-row { border-bottom: 1px solid #F3F4F6; }
+        .class-btn { transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); }
+        .class-btn.active { transform: scale(1.1); border-color: currentColor; background-color: rgba(0,0,0,0.05); }
+        .class-btn.inactive { opacity: 0.2; filter: grayscale(1); border-color: #E5E7EB; }
     </style>
 </head>
 <body class="pb-24">
 
-    <!-- HEADER -->
-    <header class="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-gray-100 px-6 py-4">
+    <header class="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-100 px-6 py-6">
         <div class="max-w-md mx-auto flex justify-between items-center">
             <div>
-                <h1 class="text-xl font-extrabold tracking-tight text-gray-900 uppercase">Dofus <span class="text-[#B1C42E]">Daily</span></h1>
+                <h1 class="text-2xl font-extrabold tracking-tighter text-gray-900">DOFUS<span class="text-[#B1C42E]">DAILY</span></h1>
                 <p id="current-date" class="text-[10px] text-gray-400 font-bold uppercase tracking-widest leading-none mt-1"></p>
             </div>
-            <div id="global-total" class="bg-gray-900 text-white text-[10px] px-3 py-1 rounded-full font-bold">
-                0/16 TOTAL
+            <div class="flex gap-2">
+                 <button onclick="resetAll()" class="p-2 text-gray-400 hover:text-red-500 transition-colors">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                </button>
             </div>
         </div>
     </header>
 
-    <main class="max-w-md mx-auto px-6 mt-6">
+    <main class="max-w-md mx-auto px-6 mt-4">
         
-        <!-- SELECTEUR DE PERSONNAGE (Tabs style ShipFast) -->
-        <div class="flex justify-between mb-8 bg-white p-2 rounded-2xl shadow-sm border border-gray-100">
-            <button onclick="switchChar('cra')" id="tab-cra" class="char-tab active flex flex-col items-center flex-1 py-2 text-orange-600 transition-all">
-                <span class="text-2xl">🏹</span>
-                <span class="text-[10px] font-bold uppercase">Cra</span>
-            </button>
-            <button onclick="switchChar('enu')" id="tab-enu" class="char-tab flex flex-col items-center flex-1 py-2 text-blue-600 transition-all">
-                <span class="text-2xl">💰</span>
-                <span class="text-[10px] font-bold uppercase">Enu</span>
-            </button>
-            <button onclick="switchChar('feca')" id="tab-feca" class="char-tab flex flex-col items-center flex-1 py-2 text-cyan-500 transition-all">
-                <span class="text-2xl">🛡️</span>
-                <span class="text-[10px] font-bold uppercase">Féca</span>
-            </button>
-            <button onclick="switchChar('panda')" id="tab-panda" class="char-tab flex flex-col items-center flex-1 py-2 text-green-700 transition-all">
-                <span class="text-2xl">🐼</span>
-                <span class="text-[10px] font-bold uppercase">Panda</span>
-            </button>
-        </div>
-
-        <!-- PROGRESS BAR PERSONNAGE -->
-        <div class="mb-8">
-            <div class="flex justify-between items-end mb-2">
-                <h2 id="char-name-display" class="text-2xl font-black text-gray-800 uppercase italic">Cra</h2>
-                <span class="text-sm font-bold text-gray-400"><span id="char-count">0</span>/4</span>
-            </div>
-            <div class="w-full bg-gray-200 h-3 rounded-full overflow-hidden">
-                <div id="char-progress-bar" class="bg-[#B1C42E] h-full w-0 transition-all duration-500"></div>
+        <div class="flex justify-between items-center mb-6 px-2">
+            <span class="text-[10px] font-black text-gray-300 uppercase tracking-widest">Quêtes</span>
+            <div class="flex gap-3">
+                <span class="w-8 text-center text-[10px] font-bold text-orange-500">CRA</span>
+                <span class="w-8 text-center text-[10px] font-bold text-blue-500">ENU</span>
+                <span class="w-8 text-center text-[10px] font-bold text-cyan-600">FEC</span>
+                <span class="w-8 text-center text-[10px] font-bold text-green-700">PAN</span>
             </div>
         </div>
 
-        <!-- LISTE DES QUÊTES -->
-        <div class="space-y-3" id="quest-container">
-            <!-- Les quêtes seront générées ici par JS -->
+        <div class="space-y-1" id="main-container">
+            </div>
+
+        <div class="mt-12 p-6 bg-gray-50 rounded-[2.5rem] border border-gray-100">
+            <div class="flex justify-between items-end mb-4">
+                <h3 class="font-black text-gray-900 uppercase italic">Progression Totale</h3>
+                <span id="global-percent" class="text-2xl font-black text-[#B1C42E]">0%</span>
+            </div>
+            <div class="w-full bg-gray-200 h-2 rounded-full overflow-hidden">
+                <div id="global-progress-bar" class="bg-[#B1C42E] h-full w-0 transition-all duration-700"></div>
+            </div>
+            <p id="global-count" class="text-[10px] text-gray-400 font-bold uppercase mt-3 tracking-widest">0 / 16 quêtes terminées</p>
         </div>
 
     </main>
 
-    <!-- NAV BASSE -->
-    <nav class="fixed bottom-6 left-1/2 -translate-x-1/2 w-[92%] max-w-md bg-gray-900 rounded-[2.5rem] p-4 shadow-2xl flex justify-around items-center border border-white/10">
-        <button class="text-[#B1C42E]"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg></button>
-        <button onclick="resetAll()" class="text-white/30 hover:text-red-400 transition-colors"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg></button>
-    </nav>
-
     <script>
-        const questsTemplate = [
-            { id: 'alma', title: 'Almanax', sub: 'Offrande du jour', icon: '📅' },
-            { id: 'dopeul', title: 'Dopeuls', sub: 'Tour des temples', icon: '⚔️' },
-            { id: 'kerubim', title: 'Kérubim', sub: 'Poils de barbe', icon: '🐱' },
-            { id: 'village', title: 'Village Ensablé', sub: 'Quête de zone', icon: '🏖️' }
+        const classes = [
+            { id: 'cra', icon: '🏹', color: '#EA580C' }, // Orange-600
+            { id: 'enu', icon: '💰', color: '#2563EB' }, // Blue-600
+            { id: 'feca', icon: '🛡️', color: '#0891B2' }, // Cyan-600
+            { id: 'panda', icon: '🐼', color: '#15803D' } // Green-700
         ];
 
-        let currentChar = 'cra';
-        
-        // Structure des données : { cra: { alma: true, dopeul: false ... }, enu: {...} }
-        let db = JSON.parse(localStorage.getItem('dofus_tracker')) || {
-            cra: {}, enu: {}, feca: {}, panda: {}
-        };
+        const questsTemplate = [
+            { id: 'alma', title: 'Almanax', icon: '📅' },
+            { id: 'dopeul', title: 'Dopeuls', icon: '⚔️' },
+            { id: 'kerub', title: 'Kérubim', icon: '🐱' },
+            { id: 'protector', title: 'Protecteur', icon: '🛡️' },
+            { id: 'meryde', title: 'Méryde', icon: '✨' }
+        ];
+
+        // Données : db['alma']['cra'] = true/false
+        let db = JSON.parse(localStorage.getItem('dofus_multi_db')) || {};
 
         function init() {
-            // Date
-            const options = { weekday: 'short', day: 'numeric', month: 'short' };
+            const options = { day: 'numeric', month: 'long' };
             document.getElementById('current-date').innerText = new Date().toLocaleDateString('fr-FR', options);
-            renderQuests();
-            updateStats();
+            render();
         }
 
-        function switchChar(charId) {
-            currentChar = charId;
-            // UI Tabs
-            document.querySelectorAll('.char-tab').forEach(t => t.classList.remove('active'));
-            document.getElementById('tab-' + charId).classList.add('active');
+        function toggleQuest(questId, classId) {
+            if (!db[questId]) db[questId] = {};
+            db[questId][classId] = !db[questId][classId];
             
-            // UI Name
-            document.getElementById('char-name-display').innerText = charId;
-            
-            renderQuests();
-            updateStats();
+            localStorage.setItem('dofus_multi_db', JSON.stringify(db));
+            render();
         }
 
-        function renderQuests() {
-            const container = document.getElementById('quest-container');
+        function render() {
+            const container = document.getElementById('main-container');
             container.innerHTML = '';
 
-            questsTemplate.forEach(q => {
-                const isChecked = db[currentChar][q.id] || false;
-                const card = document.createElement('div');
-                card.className = `bento-card bg-white p-4 rounded-[2rem] flex items-center justify-between cursor-pointer ${isChecked ? 'checked' : ''}`;
-                card.onclick = () => toggleQuest(q.id);
+            let totalDone = 0;
+            const totalPossible = questsTemplate.length * classes.length;
 
-                card.innerHTML = `
-                    <div class="flex items-center gap-4">
-                        <div class="w-12 h-12 bg-gray-50 rounded-2xl flex items-center justify-center text-xl shadow-inner">${q.icon}</div>
-                        <div>
-                            <h3 class="font-bold text-gray-800 tracking-tight">${q.title}</h3>
-                            <p class="text-[10px] text-gray-400 font-bold uppercase">${q.sub}</p>
-                        </div>
+            questsTemplate.forEach(q => {
+                const row = document.createElement('div');
+                row.className = 'quest-row py-4 flex justify-between items-center';
+                
+                let buttonsHtml = '';
+                classes.forEach(c => {
+                    const isChecked = db[q.id] && db[q.id][c.id];
+                    if (isChecked) totalDone++;
+                    
+                    buttonsHtml += `
+                        <button onclick="toggleQuest('${q.id}', '${c.id}')" 
+                                class="class-btn w-8 h-8 rounded-xl border-2 flex items-center justify-center text-sm
+                                ${isChecked ? 'active' : 'inactive'}"
+                                style="color: ${c.color}; border-color: ${isChecked ? c.color : '#E5E7EB'}">
+                            ${c.icon}
+                        </button>
+                    `;
+                });
+
+                row.innerHTML = `
+                    <div class="flex items-center gap-3">
+                        <span class="text-lg">${q.icon}</span>
+                        <span class="font-bold text-gray-800 text-sm tracking-tight">${q.title}</span>
                     </div>
-                    <div class="w-8 h-8 rounded-full border-2 ${isChecked ? 'bg-[#B1C42E] border-[#B1C42E]' : 'border-gray-100'} flex items-center justify-center transition-all">
-                        ${isChecked ? '<svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>' : ''}
+                    <div class="flex gap-3">
+                        ${buttonsHtml}
                     </div>
                 `;
-                container.appendChild(card);
+                container.appendChild(row);
             });
-        }
 
-        function toggleQuest(questId) {
-            db[currentChar][questId] = !db[currentChar][questId];
-            save();
-            renderQuests();
-            updateStats();
-        }
-
-        function updateStats() {
-            // Stats du perso actuel
-            const currentQuests = Object.values(db[currentChar]).filter(v => v === true).length;
-            document.getElementById('char-count').innerText = currentQuests;
-            document.getElementById('char-progress-bar').style.width = (currentQuests / questsTemplate.length * 100) + '%';
-
-            // Stats globales
-            let total = 0;
-            Object.values(db).forEach(charObj => {
-                total += Object.values(charObj).filter(v => v === true).length;
-            });
-            document.getElementById('global-total').innerText = `${total}/${questsTemplate.length * 4} TOTAL`;
-        }
-
-        function save() {
-            localStorage.setItem('dofus_tracker', JSON.stringify(db));
+            // Update Global Progress
+            const percent = Math.round((totalDone / totalPossible) * 100);
+            document.getElementById('global-percent').innerText = percent + '%';
+            document.getElementById('global-progress-bar').style.width = percent + '%';
+            document.getElementById('global-count').innerText = `${totalDone} / ${totalPossible} quêtes terminées`;
         }
 
         function resetAll() {
-            if(confirm("Réinitialiser toutes les quêtes pour tous les persos ?")) {
-                db = { cra: {}, enu: {}, feca: {}, panda: {} };
-                save();
-                renderQuests();
-                updateStats();
+            if(confirm("Vider toutes les quêtes du jour ?")) {
+                db = {};
+                localStorage.removeItem('dofus_multi_db');
+                render();
             }
         }
 
